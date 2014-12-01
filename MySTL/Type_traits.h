@@ -61,15 +61,6 @@ namespace MySTL
 		typedef _true_type    is_POD_type; 
 	}; 
 	template<>
-	struct _type_traits<unsigned char>
-	{
-		typedef _true_type	   has_trivial_default_constructor;
-		typedef _true_type    has_trivial_copy_constructor;
-		typedef _true_type    has_trivial_assignment_operator;
-		typedef _true_type    has_trivial_destructor;
-		typedef _true_type    is_POD_type; 
-	}; 
-	template<>
 	struct _type_traits<int>
 	{
 		typedef _true_type	  has_trivial_default_constructor;
