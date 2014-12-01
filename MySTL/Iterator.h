@@ -1,6 +1,6 @@
 #ifndef _ITERATOR_H_
 #define _ITERATOR_H_
-
+#include<stddef.h>
 namespace MySTL{
 
 	struct input_iterator_tag{};
@@ -9,8 +9,8 @@ namespace MySTL{
 	struct bidirectional_iterator_tag:public forward_iterator_tag{};
 	struct random_access_iterator_tag:public bidirectional_iterator_tag{};
 	
-	template <class Category,class T,class Distance = ptrdiff_t,
-	class Pointer = T*,class Reference = T&>
+	template<class Category, class T, class Distance = ptrdiff_t,
+	class Pointer = T*, class Reference = T&>
 	struct iterator
 	{
 		typedef Category    iterator_category;
@@ -52,7 +52,7 @@ namespace MySTL{
 	
 	template<class Iterator>
 	inline typename iterator_traits<Iterator>::iterator_category
-	iterator_category<const Iterator&>
+	iterator_category(const Iterator&)
 	{
 		typedef typename iterator_traits<Iterator>::iterator_category category;
 		return category();
@@ -60,14 +60,14 @@ namespace MySTL{
 	
 	template<class Iterator>
 	inline typename iterator_traits<Iterator>::difference_type*
-	difference_type<const Iterator&>
+	difference_type(const Iterator&)
 	{
 		return static_cast<typename iterator_traits<Iterator>::difference_type*>(0);
 	} 
 	
 	template<class Iterator>
 	inline typename iterator_traits<Iterator>::value_type*
-	value_type<const Iterator&>
+	value_type(const Iterator&)
 	{
 		return static_cast<typename iterator_traits<Iterator>::value_type*>(0);
 	} 
