@@ -26,14 +26,14 @@ namespace MySTL
 	    	typedef allocator<U> other;	
 	    };
 	    
-	    T* allocate();
-	    T* allocate(size_type n);
-	    void deallocate(T *ptr);
-	    void deallocate(T *ptr,size_t n);
-	    void construct(pointer ptr);
-	    void construct(pointer ptr,const T&value);
-	    void destroy(T *ptr);
-	    void destroy(T *first,T *last);
+	    static T* allocate();
+	    static T* allocate(size_type n);
+	    static void deallocate(T *ptr);
+	    static void deallocate(T *ptr,size_t n);
+	    static void construct(pointer ptr);
+	    static void construct(pointer ptr,const T&value);
+	    static void destroy(T *ptr);
+	    static void destroy(T *first,T *last);
 	};
 	
 	template<class T>
