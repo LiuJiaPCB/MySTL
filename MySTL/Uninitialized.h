@@ -14,7 +14,7 @@ template<class InputIterator,class ForwardIterator>
 ForwardIterator __uninitialized_copy_aux(InputIterator first, InputIterator last,
 		                                ForwardIterator result, _true_type)
 {
-	return copy(first,last,result);
+	return std::copy(first,last,result);
 }
 /*__false_type*/
 template<class InputIterator,class ForwardIterator>
@@ -31,7 +31,7 @@ inline ForwardIterator __uninitialized_copy_aux(InputIterator first,InputIterato
 
 template<class InputIterator,class ForwardIterator,class T>
 inline ForwardIterator __uninitialized_copy(InputIterator first,InputIterator last,
-                                            ForwardIterator result)
+                                            ForwardIterator result,T*)
 {
 	typedef  typename _type_traits<T>::is_POD_type  is_POD;
 	return __uninitialized_copy_aux(first,last,result,is_POD());
