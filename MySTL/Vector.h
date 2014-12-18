@@ -22,6 +22,8 @@ namespace MySTL
 			typedef   size_t              size_type;
 			typedef   ptrdiff_t           difference_type;
 			
+			typedef   _true_type           type;
+			
 		protected:
 		    typedef  Alloc   data_allocator;
 			iterator start;
@@ -44,14 +46,13 @@ namespace MySTL
 			iterator begin(){return (start);}
 			const_iterator begin() const{return (start);}
 			const_iterator cbegin() const{return (start);}
-			iterator end() {return (end);}
-			const_iterator end()const {return (end);}
-			const_iterator cend()const {return (end);}
-			/*比较*/ 
+			iterator end() {return finish;}
+			const_iterator end()const {return finish;}
+			const_iterator cend()const {return finish;}
+		    /*比较*/ 
 			bool operator ==(const Vector& v);
 			bool operator !=(const Vector& v);
-			
-			
+		
 			/*容量函数*/
 			difference_type size() const{return finish - start;}
 			difference_type capacity() const{return end_of_storage-start;}
@@ -108,7 +109,7 @@ namespace MySTL
 			void allocateAndFillN(const size_type n,const value_type &value)
 			{
 				start = data_allocator::allocate(n);
-				__uninitialized_fill_n(start,n,value);
+				uninitialized_fill_n(start,n,value);
 				finish = end_of_storage = start+n;
 			}
 			void allocateAndCopy(iterator first,iterator last)
@@ -142,6 +143,9 @@ namespace MySTL
 				size_type newCapacity = (oldCapacity!=0?(oldCapacity+res):n);
 				return newCapacity;
 			}
+//		public:
+//			friend bool operator ==(const Vector<T,Alloc>&v1,const Vector<T,Alloc>&v2);
+//			friend bool operator !=(const Vector<T,Alloc>&v1,const Vector<T,Alloc>&v2);
 
    };/*end of class Vector*
 			/*构造，析构，复制函数*/
@@ -167,6 +171,17 @@ namespace MySTL
 			Vector<T,Alloc>::Vector(const Vector &v)
 			{
 				allocateAndCopy(v.start,v.finish);
+			}
+			
+			template<class T,class Alloc>
+			Vector<T,Alloc>& Vector<T,Alloc>::operator=(const Vector& v)
+			{
+				if(&v!=this)
+				{
+					allocateAndCopy(v.start,v.finish);
+				}
+				
+				return *this; 
 			}
 			
 			/*容量相关*/
@@ -252,7 +267,7 @@ namespace MySTL
 				T *newStart = data_allocator::allocate(newCapacity); 
 				T *newEndOfStorage = newStart + newCapacity;
 				T *newFinish = MySTL::uninitialized_copy(begin(),position,newStart);
-				newFinish = __uninitialized_fill_n(newFinish,n,val);
+				newFinish = uninitialized_fill_n(newFinish,n,val);
 				newFinish = MySTL::uninitialized_copy(position,end(),newFinish);
 				
 				destroyAndDeallocateAll();
@@ -306,6 +321,29 @@ namespace MySTL
 			}	
 			
 			template<class T,class Alloc>
+			void Vector<T,Alloc>::insert(iterator position,iterator first,iterator last)
+			{
+				insert_aux(position,first,last,typename Vector<T,Alloc>::type());
+			}
+			
+			template<class T,class Alloc>
+			void Vector<T,Alloc>::insert(iterator position,const size_type &n,const value_type &val)
+			{
+				insert_aux(position,n,val,typename Vector<T,Alloc>::type());
+			}
+			template<class T, class Alloc>
+	        typename Vector<T,Alloc>::iterator Vector<T,Alloc>::instert(iterator position,const value_type& val)
+			{
+		      const size_t index = position - begin();
+		      insert(position, 1, val);
+		      return begin() + index;
+	        }
+			template<class T,class Alloc>
+			void Vector<T,Alloc>::push_back(const value_type &value)
+			{
+				instert(end(),value);
+			}
+			template<class T,class Alloc>
 			bool Vector<T,Alloc>::operator ==(const Vector& v)
 			{
 				if(size()!=v.size())
@@ -332,6 +370,18 @@ namespace MySTL
 			{
 				return !(*this==v);
 			}
+			
+/*			template<class T,class Alloc>
+			bool operator ==(const Vector<T,Alloc>& v1,const Vector<T,Alloc>& v2)
+			{
+				return v1==v2;
+			}
+			
+			template<class T,class Alloc>
+			bool operator!=(const Vector<T,Alloc>& v1,const Vector<T,Alloc>& v2)
+			{
+				return !(v1==v2);
+			}*/
 
 }
            
