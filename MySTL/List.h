@@ -9,11 +9,12 @@
 
 namespace MySTL
 {
+	//节点定义,基类只有指针 
 	struct slist_node_base
 	{
 		slist_node_base * next;
-	}
-	
+	};
+	//派生类，加上了数据 
 	template<class T>
 	struct slist_node:public slist_node_base
 	{
@@ -21,7 +22,7 @@ namespace MySTL
 	};
 	
 	//在某一节点后插入一个新节点 
-	inline slist_node_base* slist_make_link(slist_node_base *pre_node,slist_node_base *new_node)
+	inline slist_node_base* slist_make_link(slist_node_base *prev_node,slist_node_base *new_node)
 	{
 		new_node->next = prev_node->next;
 		prev_node->next = new_node;
@@ -37,26 +38,23 @@ namespace MySTL
 		}
 		return result;
 	} 
-	//单向链表的迭代器的基本结构
+/*******************************下面是迭代器的实现*********************************/ 
+	//单向链表的迭代器的基本结构，基类 
 	class slist_iterator_base
 	{
       public:
+	    slist_node_base *node;   //唯一的数据成员 
 		typedef size_t size_type;
 		typedef ptrdiff_t difference_type;
-		typedef forward_iterator_tag iterator_category;
+		typedef forward_iterator_tag iterator_category;  //读写型迭代器 
 		
-		slist_node_base *node;
-		
-		slist_iterator_base(slist_node_base *x):node(x)
-		{
-		}
-		
+		slist_iterator_base(slist_node_base *x):node(x){} //构造函数	
 		void incr()
 		{
 			node = node->next;
 		}
 		
-		bool operator==(const slist_iterstor_base& x)const
+		bool operator==(const slist_iterator_base& x)const
 		{
 			return node == x.node;
 		}
@@ -70,7 +68,7 @@ namespace MySTL
 	template<class T,class Ref,class Ptr>
 	struct slist_iterator:public slist_iterator_base
 	{
-		typedef slist_iterator<T,&T,*T>    iterator;
+		typedef slist_iterator<T,Ref,Ptr>  iterator;
 		typedef slist_iterator<T,Ref,Ptr>  self; 
 		typedef T      value_type;
 		typedef Ptr    pointer;
@@ -123,7 +121,7 @@ namespace MySTL
 			typedef slist_iterator<T,const T&,const T*> const_iterator;	
 			
 		private:
-		    list_node_base  head; //链表头部
+		    slist_node_base  head; //链表头部
 		    
 		    typedef slist_node<T> list_node;
 		    typedef slist_node_base list_node_base;
@@ -138,10 +136,15 @@ namespace MySTL
 		    	return node;
 		    }
 		    
+		    static void destroy_node(list_node *node)
+			{
+				destroy(&node->data);
+				list_node_allocator::deallocate(node,1);
+			} 
 			
 	    public:
-		    slist(){head.next = 0;}
-			~slist(){clear();}	
+		    List(){head.next = 0;}
+	//		~List(){clear();}	
 		public:
 			iterator begin()
 			{
@@ -160,7 +163,7 @@ namespace MySTL
 				return head.next == 0;
 			}
 			
-			void swap(slist& L)
+			void swap(List& L)
 			{
 				list_node_base *tmp = head.next;
 				head.next = L.head.next;
