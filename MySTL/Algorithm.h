@@ -92,6 +92,37 @@ OutputIterator partial_sum(InputIterator first,InputIterator last,OutputIterator
 	return _partial_sum(first,last,result,value_type(first));
 } 
 
+
+/*               power               */
+template<class T,class Integer,class MonoidOperation>
+T power(T x,Integer n,MonoidOperation op)
+{
+	if(n == 0)
+	{
+		return 1;
+	}
+	else
+	{
+		while((n&1)==0) //nÊÇÅ¼Êý 
+		{
+			n = n>>1;
+			x = op(x,x);
+		}
+		T result = x;
+		n = n>>1;
+		while(n!=0)
+		{
+			x = op(x,x);
+			if((n&1)!=0)
+			{
+				result = op(result,x);
+			}
+			n=n>>1;
+		}
+		return result;
+		
+	}
+} 
 	
 }
 #endif
